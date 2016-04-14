@@ -462,10 +462,10 @@ function sum(x, y, z){
  console.log(x + y + z);
 }
 
-s12 = partial(sum, 1, 2);
+let s12 = partial(sum, 1, 2);
 s12(3); //6
 
-s23 = sum.bind(null, 2, 3); //Первый аргумент задает this внутри функции.
+let s23 = sum.bind(null, 2, 3); //Первый аргумент задает this внутри функции.
      //При null или undefined - глобальный объект
 s23(1); //6 Аналог
 
@@ -1119,277 +1119,10 @@ console.log("пицца" in map);
 // → true
 
 
-//Так-то лучше! Нам уже не нужна приблуда hasOwnProperty, потому что все свойства объекта заданы лично нами.
-// Мы спокойно используем циклы for/in без оглядки на то, что люди творили с Object.prototype
-
-
-//****************************************************
-//http://habrahabr.ru/post/240813/
-var JOURNAL = [
-  {"events":["carrot","exercise","weekend"],"squirrel":false},
-  {"events":["bread","pudding","brushed teeth","weekend","touched tree"],"squirrel":false},
-  {"events":["carrot","nachos","brushed teeth","cycling","weekend"],"squirrel":false},
-  {"events":["brussel sprouts","ice cream","brushed teeth","computer","weekend"],"squirrel":false},
-  {"events":["potatoes","candy","brushed teeth","exercise","weekend","dentist"],"squirrel":false},
-  {"events":["brussel sprouts","pudding","brushed teeth","running","weekend"],"squirrel":false},
-  {"events":["pizza","brushed teeth","computer","work","touched tree"],"squirrel":false},
-  {"events":["bread","beer","brushed teeth","cycling","work"],"squirrel":false},
-  {"events":["cauliflower","brushed teeth","work"],"squirrel":false},
-  {"events":["pizza","brushed teeth","cycling","work"],"squirrel":false},
-  {"events":["lasagna","nachos","brushed teeth","work"],"squirrel":false},
-  {"events":["brushed teeth","weekend","touched tree"],"squirrel":false},
-  {"events":["lettuce","brushed teeth","television","weekend"],"squirrel":false},
-  {"events":["spaghetti","brushed teeth","work"],"squirrel":false},
-  {"events":["brushed teeth","computer","work"],"squirrel":false},
-  {"events":["lettuce","nachos","brushed teeth","work"],"squirrel":false},
-  {"events":["carrot","brushed teeth","running","work"],"squirrel":false},
-  {"events":["brushed teeth","work"],"squirrel":false},
-  {"events":["cauliflower","reading","weekend"],"squirrel":false},
-  {"events":["bread","brushed teeth","weekend"],"squirrel":false},
-  {"events":["lasagna","brushed teeth","exercise","work"],"squirrel":false},
-  {"events":["spaghetti","brushed teeth","reading","work"],"squirrel":false},
-  {"events":["carrot","ice cream","brushed teeth","television","work"],"squirrel":false},
-  {"events":["spaghetti","nachos","work"],"squirrel":false},
-  {"events":["cauliflower","ice cream","brushed teeth","cycling","work"],"squirrel":false},
-  {"events":["spaghetti","peanuts","computer","weekend"],"squirrel":true},
-  {"events":["potatoes","ice cream","brushed teeth","computer","weekend"],"squirrel":false},
-  {"events":["potatoes","ice cream","brushed teeth","work"],"squirrel":false},
-  {"events":["peanuts","brushed teeth","running","work"],"squirrel":false},
-  {"events":["potatoes","exercise","work"],"squirrel":false},
-  {"events":["pizza","ice cream","computer","work"],"squirrel":false},
-  {"events":["lasagna","ice cream","work"],"squirrel":false},
-  {"events":["cauliflower","candy","reading","weekend"],"squirrel":false},
-  {"events":["lasagna","nachos","brushed teeth","running","weekend"],"squirrel":false},
-  {"events":["potatoes","brushed teeth","work"],"squirrel":false},
-  {"events":["carrot","work"],"squirrel":false},
-  {"events":["pizza","beer","work","dentist"],"squirrel":false},
-  {"events":["lasagna","pudding","cycling","work"],"squirrel":false},
-  {"events":["spaghetti","brushed teeth","reading","work"],"squirrel":false},
-  {"events":["spaghetti","pudding","television","weekend"],"squirrel":false},
-  {"events":["bread","brushed teeth","exercise","weekend"],"squirrel":false},
-  {"events":["lasagna","peanuts","work"],"squirrel":true},
-  {"events":["pizza","work"],"squirrel":false},
-  {"events":["potatoes","exercise","work"],"squirrel":false},
-  {"events":["brushed teeth","exercise","work"],"squirrel":false},
-  {"events":["spaghetti","brushed teeth","television","work"],"squirrel":false},
-  {"events":["pizza","cycling","weekend"],"squirrel":false},
-  {"events":["carrot","brushed teeth","weekend"],"squirrel":false},
-  {"events":["carrot","beer","brushed teeth","work"],"squirrel":false},
-  {"events":["pizza","peanuts","candy","work"],"squirrel":true},
-  {"events":["carrot","peanuts","brushed teeth","reading","work"],"squirrel":false},
-  {"events":["potatoes","peanuts","brushed teeth","work"],"squirrel":false},
-  {"events":["carrot","nachos","brushed teeth","exercise","work"],"squirrel":false},
-  {"events":["pizza","peanuts","brushed teeth","television","weekend"],"squirrel":false},
-  {"events":["lasagna","brushed teeth","cycling","weekend"],"squirrel":false},
-  {"events":["cauliflower","peanuts","brushed teeth","computer","work","touched tree"],"squirrel":false},
-  {"events":["lettuce","brushed teeth","television","work"],"squirrel":false},
-  {"events":["potatoes","brushed teeth","computer","work"],"squirrel":false},
-  {"events":["bread","candy","work"],"squirrel":false},
-  {"events":["potatoes","nachos","work"],"squirrel":false},
-  {"events":["carrot","pudding","brushed teeth","weekend"],"squirrel":false},
-  {"events":["carrot","brushed teeth","exercise","weekend","touched tree"],"squirrel":false},
-  {"events":["brussel sprouts","running","work"],"squirrel":false},
-  {"events":["brushed teeth","work"],"squirrel":false},
-  {"events":["lettuce","brushed teeth","running","work"],"squirrel":false},
-  {"events":["candy","brushed teeth","work"],"squirrel":false},
-  {"events":["brussel sprouts","brushed teeth","computer","work"],"squirrel":false},
-  {"events":["bread","brushed teeth","weekend"],"squirrel":false},
-  {"events":["cauliflower","brushed teeth","weekend"],"squirrel":false},
-  {"events":["spaghetti","candy","television","work","touched tree"],"squirrel":false},
-  {"events":["carrot","pudding","brushed teeth","work"],"squirrel":false},
-  {"events":["lettuce","brushed teeth","work"],"squirrel":false},
-  {"events":["carrot","ice cream","brushed teeth","cycling","work"],"squirrel":false},
-  {"events":["pizza","brushed teeth","work"],"squirrel":false},
-  {"events":["spaghetti","peanuts","exercise","weekend"],"squirrel":true},
-  {"events":["bread","beer","computer","weekend","touched tree"],"squirrel":false},
-  {"events":["brushed teeth","running","work"],"squirrel":false},
-  {"events":["lettuce","peanuts","brushed teeth","work","touched tree"],"squirrel":false},
-  {"events":["lasagna","brushed teeth","television","work"],"squirrel":false},
-  {"events":["cauliflower","brushed teeth","running","work"],"squirrel":false},
-  {"events":["carrot","brushed teeth","running","work"],"squirrel":false},
-  {"events":["carrot","reading","weekend"],"squirrel":false},
-  {"events":["carrot","peanuts","reading","weekend"],"squirrel":true},
-  {"events":["potatoes","brushed teeth","running","work"],"squirrel":false},
-  {"events":["lasagna","ice cream","work","touched tree"],"squirrel":false},
-  {"events":["cauliflower","peanuts","brushed teeth","cycling","work"],"squirrel":false},
-  {"events":["pizza","brushed teeth","running","work"],"squirrel":false},
-  {"events":["lettuce","brushed teeth","work"],"squirrel":false},
-  {"events":["bread","brushed teeth","television","weekend"],"squirrel":false},
-  {"events":["cauliflower","peanuts","brushed teeth","weekend"],"squirrel":false}
-];
-
-function phi(table) {
-  return (table[3] * table[0] - table[2] * table[1]) /
-    Math.sqrt((table[2] + table[3]) *
-              (table[0] + table[1]) *
-              (table[1] + table[3]) *
-              (table[0] + table[2]));
-}
-
-function gatherCorrelations(journal) {
-  var phis = {};
-  for (var entry = 0; entry < journal.length; entry++) {
-    var events = journal[entry].events;
-    for (var i = 0; i < events.length; i++) {
-      var event = events[i];
-      if (!(event in phis))
-        phis[event] = phi(tableFor(event, journal));
-    }
-  }
-  return phis;
-}
-
-function hasEvent(event, entry) {
-  return entry.events.indexOf(event) != -1;
-}
-
-function tableFor(event, journal) {
-  var table = [0, 0, 0, 0];
-  for (var i = 0; i < journal.length; i++) {
-    var entry = journal[i], index = 0;
-    if (hasEvent(event, entry)) index += 1;
-    if (entry.squirrel) index += 2;
-    table[index] += 1;
-  }
-  return table;
-}
-
-var correlations = gatherCorrelations(JOURNAL);
-
-for (var event in correlations) {
-  var correlation = correlations[event];
-  if (correlation > 0.1 || correlation < -0.1)
-    console.log(event + ": " + correlation);
-}
-
-for (var i = 0; i < JOURNAL.length; i++) {
-  var entry = JOURNAL[i];
-  if (hasEvent("peanuts", entry) &&
-     !hasEvent("brushed teeth", entry))
-    entry.events.push("арахис зубы");
-}
-console.log(phi(tableFor("арахис зубы", JOURNAL))); // → 1
+//******************************************************
 
 
 
-
-
-
-
-
-
-
-
-
-//************************************************
-//Рисуем таблицу. Не знаю, оставить тут или в отдельный проект...
-//Получает массив строк
-function rowHeights(rows) {
-  //Каждую строку обрабатываем функцией
-
-  return rows.map(function(row) {
-    //Которая находит максимальную массива, являющегося ячейками
-    //В результате вместо массива строк получаем массив высот для каждой строки
-
-    return row.reduce(function(max, cell) {
-      return Math.max(max, cell.minHeight());
-    }, 0);
-  });
-}
-
-//Получает массив строк, возвращает ширину каждой колонки
-function colWidths(rows) {
-  //Обходим каждую ячейку первой строки. Можно делать forEach, но придется вручную увеличивать i
-  return rows[0].map(function(_, i) {  //При этом значения не используем, а только номера
-    return rows.reduce(function(max, row) {
-
-      return Math.max(max, row[i].minWidth());
-    }, 0);
-  });
-}
-
-function drawTable(rows) {
-  var heights = rowHeights(rows); //Массив высот строк
-
-  var widths = colWidths(rows); //Массив широт колонок
-
-  function drawLine(blocks, lineNo) {
-    return blocks.map(function(block) {
-      return block[lineNo];
-    }).join(" ");
-  }
-
-  function drawRow(row, rowNum) {
-    var blocks = row.map(function(cell, colNum) {
-      return cell.draw(widths[colNum], heights[rowNum]);
-    });
-    return blocks[0].map(function(_, lineNo) {
-      return drawLine(blocks, lineNo);
-    }).join("\n");
-  }
-
-  return rows.map(drawRow).join("\n");
-}
-
-//Функция повторяет строку times количество раз
-function repeat(string, times) {
-  var result = "";
-  for (var i = 0; i < times; i++)
-    result += string;
-  return result;
-}
-
-//Конструктор
-function TextCell(text) {
-  this.text = text.split("\n");
-  //Превращаем текст в массив, разбивая по переносу строки
-}
-
-//Создаем метод класса
-TextCell.prototype.minWidth = function() {
-  return this.text.reduce(function(width, line) {
-    //Сравниваем длину каждого элемента массива(линия) с максимальной длиной.
-    return Math.max(width, line.length);
-  }, 0); //Начальнам максимальная длина 0
-};
-
-//Метод выводит количество элементов массива. Это высота ячейки
-TextCell.prototype.minHeight = function() {
-	return this.text.length;
-};
-
-//Метод получает ширину и высоту.
-//Возвращает result - массив строк, добивая каждую строку в ширину недостающими пробелами.
-//А каждую недостающую строку строкой из пустых пробелов
-TextCell.prototype.draw = function(width, height) {
-  var result = [];
-  for (var i = 0; i < height; i++) {
-    var line = this.text[i] || "";
-    result.push(line + repeat(" ", width - line.length));
-  }
-  return result;
-};
-
-var rows = [];
-for (var i = 0; i < 5; i++) {
-   var row = [];
-   for (var j = 0; j < 5; j++) {
-     if ((j + i) % 2 == 0)
-       row.push(new TextCell("##"));
-     else
-       row.push(new TextCell("  "));
-   }
-   rows.push(row);
-}
-
-console.log(drawTable(rows));
-// → ##    ##    ##
-//      ##    ##
-//   ##    ##    ##
-//      ##    ##
-//   ##    ##    ##
-
-//**************************
 function User(name) {
 
   this.sayHi = function() {
@@ -1889,3 +1622,313 @@ alert( max ); // 15
 
 
 //**************************
+try {
+  console.log(x);
+}
+catch (err) {
+  console.log(err); //ReferenceError: z is not defined(…)
+}
+ //*******************
+let arr = [1, 2, 3, 4, 5];
+
+let sliced = arr.slice(2, 4);
+
+console.log(sliced); //[3, 4]
+
+let reversed = sliced.reverse();
+
+console.log(reversed); //[4, 2]
+//***************************
+//Пример: объединение двух массивов
+var alpha = ["a", "b", "c"];
+var numeric = [1, 2, 3];
+
+// создает массив ["a", "b", "c", 1, 2, 3];
+var alphaNumeric = alpha.concat(numeric);
+
+//Пример: объединение трех массивов
+var num1 = [1, 2, 3];
+var num2 = [4, 5, 6];
+var num3 = [7, 8, 9];
+
+// создает массив [1, 2, 3, 4, 5, 6, 7, 8, 9];
+var nums = num1.concat(num2, num3);
+
+//Пример: добавление значений в массив
+//показать чистый исходник в новом окнеСкрыть/показать номера строкпечать кода с сохранением подсветки
+var alpha = ['a', 'b', 'c'];
+
+// создает массив ["a", "b", "c", 1, 2, 3]
+var alphaNumeric = alpha.concat(1, [2, 3]);
+
+//********************************** curry
+var greetDeeplyCurried = function(greeting) {
+  return function(separator) {
+    return function(emphasis) {
+      return function(name) {
+        console.log(greeting + separator + name + emphasis);
+      };
+    };
+  };
+};
+
+var greetAwkwardly = greetDeeplyCurried("Hello")("...")("?");
+greetAwkwardly("Heidi"); //"Hello...Heidi?"
+greetAwkwardly("Eddie"); //"Hello...Eddie?"
+
+//****************************
+var curryIt = function(uncurried) {
+    var parameters = Array.prototype.slice.call(arguments, 1);
+    console.log(parameters); //["Hello", ", ", "."]
+    return function() {
+        console.log(parameters.concat(Array.prototype.slice.call(arguments, 0)));
+        //["Hello", ", ", ".", "Heidi"]
+        //["Hello", ", ", ".", "Eddie"]
+        return uncurried.apply(this, parameters.concat(
+            Array.prototype.slice.call(arguments, 0)
+        ));
+    };
+};
+
+var greeter = function(greeting, separator, emphasis, name) {
+    console.log(greeting + separator + name + emphasis);
+};
+var greetHello = curryIt(greeter, "Hello", ", ", ".");
+greetHello("Heidi"); //"Hello, Heidi."
+greetHello("Eddie"); //"Hello, Eddie."
+
+//************************
+
+
+class Test {
+
+  test(a, b, c){
+    console.log(this);
+    console.log(a, b, c);
+  }
+
+}
+
+Test.prototype.curriedTest = curry(Test.prototype.test, 1, 2);
+//t.__proto__.curriedTest = curry(t.__proto__.test, 1, 2);
+
+let t = new Test;
+t.test();
+
+function curry(func, ...rest1){
+  return function(...rest2){
+    let self = this;
+//Тут мы получим this Test {}, поскольку эта функция запускается t.curriedTest
+    let args = rest1.concat(rest2);
+    return func.bind(this)(...args);
+  }
+}
+
+t.curriedTest(3);
+//Test {}
+//undefined undefined undefined
+//Test {}
+//1 2 3
+
+
+
+//***********************************
+let store = {};
+store.dispatch = function (){
+    console.log(arguments);
+
+};
+
+let m1 = function(store){
+    let orig_dispatch = store.dispatch;
+    return function(){
+        console.log('m1');
+        return orig_dispatch(...arguments);
+    };
+
+};
+let m2 = function(store){
+    let orig_dispatch = store.dispatch;
+    return function(){
+        console.log('m2');
+        return orig_dispatch(...arguments);
+    };
+};
+let middlewares = [m1, m2];
+
+function applyMiddlewareByMonkeypatching(store, middlewares) {
+    middlewares = middlewares.slice()
+    middlewares.reverse()
+
+    // Transform dispatch function with each middleware.
+    middlewares.forEach(middleware =>
+        store.dispatch = middleware(store)
+    )
+}
+
+applyMiddlewareByMonkeypatching(store, middlewares);
+
+store.dispatch(1);
+
+
+//m1
+//m2
+//[1]
+
+//***************************** study
+
+let store = {};
+store.dispatch = function (){
+    console.log(arguments);
+};
+
+store.getState = function() {};
+
+function logger1(store) {
+    return function wrapDispatchToAddLogging(next) {
+        return function dispatchAndLog(action) {
+            console.log('dispatching1', action)
+            let result = next(action)
+            console.log('next state1', store.getState())
+            return result
+        }
+    }
+}
+
+const logger2 = store => next => action => {
+    console.log('dispatching2', action)
+    let result = next(action)
+    console.log('next state2', store.getState())
+    return result
+}
+
+let middlewares = [logger1, logger2];
+
+function applyMiddleware(store, middlewares) {
+    middlewares = middlewares.slice()
+    middlewares.reverse()
+
+
+    let dispatch = store.dispatch
+    middlewares.forEach(middleware =>
+        dispatch = middleware(store)(dispatch)
+    )
+
+    return Object.assign({}, store, { dispatch }); //{ dispatch: dispatch}
+    //Object.assign(target, ...sources)
+}
+
+let dispathed_store = applyMiddleware(store, middlewares);
+
+dispathed_store.dispatch(1);
+
+//**********************************
+
+
+class Polygon {
+    constructor(height, width) {
+        this.height = height;
+        this.width = width;
+    }
+}
+
+//A class expression is another way to define a class. Class expressions can be named or unnamed. The name //given to a named class expression is local to the class's body.
+
+// unnamed
+var Polygon = class {
+    constructor(height, width) {
+        this.height = height;
+        this.width = width;
+    }
+};
+
+// named
+var Polygon = class Polygon {
+    constructor(height, width) {
+        this.height = height;
+        this.width = width;
+    }
+};
+
+
+var p = new Polygon();
+console.log(p) //Polygon {height: undefined, width: undefined}
+
+//**********************************
+class Cat {
+    constructor(name) {
+        this.name = name;
+    }
+
+    speak() {
+        console.log(this.name + ' makes a noise.');
+    }
+}
+
+class Lion extends Cat {
+    speak() {
+        super.speak();
+        console.log(this.name + ' roars.');
+    }
+}
+
+//**********************************
+class Polygon {
+    constructor(height, width) {
+        this.height = height;
+        this.width = width;
+    }
+
+    get area() {
+        return this.calcArea();
+    }
+
+    calcArea() {
+        return this.height * this.width;
+    }
+}
+
+const square = new Polygon(10, 10);
+
+console.log(square.area);
+
+//***********************
+
+class Point {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    static distance(a, b) {
+        const dx = a.x - b.x;
+        const dy = a.y - b.y;
+
+        return Math.sqrt(dx*dx + dy*dy);
+    }
+}
+
+const p1 = new Point(5, 5);
+const p2 = new Point(10, 10);
+
+console.log(Point.distance(p1, p2));
+
+//****************************
+var CalculatorMixin = Base => class extends Base {
+    calc() { }
+};
+
+var RandomizerMixin = Base => class extends Base {
+    randomize() { }
+};
+
+class Foo { }
+class Bar extends CalculatorMixin(RandomizerMixin(Foo)) { }
+
+var b = new Bar();
+console.log(b.calc) //function calc() { }
+
+//******************************
+var action = function(){};
+console.log(typeof action === 'function') //true
+//*****************************************
