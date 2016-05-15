@@ -1,4 +1,19 @@
 'use strict';
+//Resourses
+
+//https://learn.javascript.ru/ - reread on learn
+//https://developer.mozilla.org/ru/docs/Web/API
+//https://www.w3.org/TR/dom/
+//http://www.w3schools.com/
+//https://developer.mozilla.org/en-US/docs/Web/API
+//https://drafts.csswg.org/
+//http://caniuse.com/
+//https://dom.spec.whatwg.org/
+//
+
+
+
+
 
 //**************************
 console.log(range(1, 10)); //[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -1151,346 +1166,6 @@ alert( obj.__proto__.__proto__ ); // null, нет
 
 //*************************
 
-var user = { firstName: "Вася" };
-var admin = { firstName: "Админ" };
-
-function func() {
-  alert( this.firstName );
-}
-
-user.f = func;
-admin.g = func;
-
-// this равен объекту перед точкой:
-user.f(); // Вася
-admin.g(); // Админ
-admin['g'](); // Админ (не важно, доступ к объекту через точку или квадратные скобки)
-
-//************************
-var arr = ["a", "b"];
-
-arr.push(function() {
-  console.log( this );
-})
-
-arr[2](); // ["a", "b", function (){…}]
-
-//*****************************
-
-var obj = {
-  go: function() {
-    alert(this)
-  }
-};  //Без этой точки с запятой будет ошибка, поскольку var obj(...)(ob.go);
-
-(obj.go)();
-
-//************************************
-
-//Преобразование объектов
-if ({} && []) {
-  alert( "Все объекты - true!" ); // alert сработает
-}
-
-//******************
-var room = {
-  number: 777,
-
-  valueOf: function() { return this.number; },
-  toString: function() { return this.number; }
-};
-
-alert( +room );  // 777, вызвался valueOf
-
-delete room.valueOf; // valueOf удалён
-
-alert( +room );  // 777, вызвался toString
-
-//*************************************
-//Дескрипторы
-//Object.defineProperty(obj, prop, descriptor)
-//Аргументы:
-
-//obj
-//Объект, в котором объявляется свойство.
-//prop
-//Имя свойства, которое нужно объявить или модифицировать.
-//descriptor
-//Дескриптор — объект, который описывает поведение свойства. В нём могут быть следующие поля:
-//value — значение свойства, по умолчанию undefined
-//writable — значение свойства можно менять, если true. По умолчанию false.
-//configurable — если true, то свойство можно удалять, а также менять его в дальнейшем при помощи новых вызовов defineProperty. По умолчанию false.
-//enumerable — если true, то свойство будет участвовать в переборе for..in. По умолчанию false.
-//get — функция, которая возвращает значение свойства. По умолчанию undefined.
-//set — функция, которая записывает значение свойства. По умолчанию undefined.
-//Чтобы избежать конфликта, запрещено одновременно указывать значение value и функции get/set. Либо значение, либо функции для его чтения-записи, одно из двух. Также запрещено и не имеет смысла указывать writable при наличии get/set-функций.
-
-//*******************************************
-var user = {
-  name: "Вася",
-  toString: function() { return this.name; }
-};
-
-// помечаем toString как не подлежащий перебору в for..in
-Object.defineProperty(user, "toString", {enumerable: false});
-
-for(var key in user) console.log(key);  // name
-//Обратим внимание, вызов defineProperty не перзаписал свойство, а просто модифицировал настройки у существующего toString.
-
-
-
-//*******************
-
-
-function Animal(){
- }
-
-var desc = {
-  value: 'Test'
-}
-Object.defineProperty(Animal.prototype, 'test', desc);
-
-var name_desc = {
-  get: function(){
-  console.log('Getting name');
-  return this._name;
-  },
-  set: function(value){
-  console.log('Setting name');
-  this._name = value;
-  }
-}
-
-Object.defineProperty(Animal.prototype, 'name', name_desc);
-var elephant = new Animal();
-console.log(elephant.test);
-elephant.name = 'elephant'
-console.log(elephant.name);
-
-
-//******************
-var user = {
-  firstName: "Вася",
-  surname: "Петров",
-
-  get fullName() {
-    return this.firstName + ' ' + this.surname;
-  },
-
-  set fullName(value) {
-    var split = value.split(' ');
-    this.firstName = split[0];
-    this.surname = split[1];
-  }
-};
-
-alert( user.fullName ); // Вася Петров (из геттера)
-
-user.fullName = "Петя Иванов";
-alert( user.firstName ); // Петя  (поставил сеттер)
-alert( user.surname ); // Иванов (поставил сеттер)
-
-//**********************************
-var user = {}
-
-Object.defineProperties(user, {
-  firstName: {
-    value: "Петя"
-  },
-
-  surname: {
-    value: "Иванов"
-  },
-
-  fullName: {
-    get: function() {
-      return this.firstName + ' ' + this.surname;
-    }
-  }
-});
-
-alert( user.fullName ); // Петя Иванов
-//***************************************
-var obj = {
-  a: 1,
-  b: 2,
-  internal: 3
-};
-
-Object.defineProperty(obj, "internal", {
-  enumerable: false
-});
-
-console.log( Object.keys(obj) ); // ["a", "b"]
-console.log( Object.getOwnPropertyNames(obj) ); ["a", "b", "internal"]
-//**************************************
-var obj = {
-  test: 5
-};
-var descriptor = Object.getOwnPropertyDescriptor(obj, 'test');
-
-// заменим value на геттер, для этого...
-delete descriptor.value; // ..нужно убрать value/writable
-delete descriptor.writable;
-descriptor.get = function() { // и поставить get
-  console.log( "hi!" );
-};
-
-// поставим новое свойство вместо старого
-
-// если не удалить - defineProperty объединит старый дескриптор с новым
-delete obj.test;
-
-Object.defineProperty(obj, 'test', descriptor);
-
-obj.test; //hi!
-
-//**************************
-//…И несколько методов, которые используются очень редко:
-
-//Object.preventExtensions(obj)
-//Запрещает добавление свойств в объект.
-//Object.seal(obj)
-//Запрещает добавление и удаление свойств, все текущие свойства делает configurable: false.
-//Object.freeze(obj)
-//Запрещает добавление, удаление и изменение свойств, все текущие свойства делает configurable: false, writable: false.
-//Object.isExtensible(obj), Object.isSealed(obj), Object.isFrozen(obj)
-//Возвращают true, если на объекте были вызваны методы Object.preventExtensions/seal/freeze.
-
-//***************************
-function User(fullName) {
-  this.fullName = fullName;
-
-  Object.defineProperties(this, {
-
-    firstName: {
-
-      get: function() {
-        return this.fullName.split(' ')[0];
-      },
-
-      set: function(newFirstName) {
-        this.fullName = newFirstName + ' ' + this.lastName;
-      }
-
-    },
-
-    lastName: {
-
-      get: function() {
-        return this.fullName.split(' ')[1];
-      },
-
-      set: function(newLastName) {
-        this.fullName = this.firstName + ' ' + newLastName;
-      }
-
-    }
-
-
-  });
-}
-
-var vasya = new User("Василий Попкин");
-
-// чтение firstName/lastName
-alert( vasya.firstName ); // Василий
-alert( vasya.lastName ); // Попкин
-
-// запись в lastName
-vasya.lastName = 'Сидоров';
-
-alert( vasya.fullName ); // Василий Сидоров
-
-//***********************************
-function Animal(){
-if (Animal.count == undefined) Animal.count = 0;
-Animal.count++;
-}
-
-Animal.getCount = function(){
-return this.count;  //Здесь this - это конструктор Animal
-}
-var a1 = new Animal();
-var a2 = new Animal();
-console.log(Animal.getCount());  //2
-console.log(Animal.count); //2
-//*********************************
-//Фабричная функция
-function User() {
-  this.sayHi = function() {
-    alert(this.name)
-  };
-}
-
-User.createAnonymous = function() {
-  var user = new User;
-  user.name = 'Аноним';
-  return user;
-}
-
-User.createFromData = function(userData) {
-  var user = new User;
-  user.name = userData.name;
-  user.age = userData.age;
-  return user;
-}
-
-// Использование
-
-var guest = User.createAnonymous();
-guest.sayHi(); // Аноним
-
-var knownUser = User.createFromData({
-  name: 'Вася',
-  age: 25
-});
-knownUser.sayHi(); // Вася
-
-//Аналог без нее
-function User(userData) {
-  if (userData) { // если указаны данные -- одна ветка if
-    this.name = userData.name;
-    this.age = userData.age;
-  } else { // если не указаны -- другая
-    this.name = 'Аноним';
-  }
-
-  this.sayHi = function() {
-    alert(this.name)
-  };
-  // ...
-}
-
-// Использование
-
-var guest = new User();
-guest.sayHi(); // Аноним
-
-var knownUser = new User({
-  name: 'Вася',
-  age: 25
-});
-knownUser.sayHi(); // Вася
-
-//**************************************
-
-
-var user = {
-  firstName: "Василий",
-  surname: "Петров",
-  patronym: "Иванович"
-};
-
-function showFullName(firstPart, lastPart) {
-  alert( this[firstPart] + " " + this[lastPart] );
-}
-//func.call(context, arg1, arg2, ...).
-
-showFullName.call(user, 'firstName', 'surname') // "Василий Петров"
-showFullName.call(user, 'firstName', 'patronym') // "Василий Иванович"
-
-//**********************
 function test(a, b, c){
 var stringArgs = Array.prototype.join.call(arguments, '|');
 var join = [].join;
@@ -1825,110 +1500,69 @@ dispathed_store.dispatch(1);
 //**********************************
 
 
-class Polygon {
-    constructor(height, width) {
-        this.height = height;
-        this.width = width;
-    }
+var age = prompt('Ваш возраст', 18);
+
+switch (age) {
+  case 18:
+    alert( 'Никогда не сработает' ); // результат prompt - строка, а не число
+
+  case "18": // вот так - сработает!
+    alert( 'Вам 18 лет!' );
+    break;
+
+  default:
+    alert( 'Любое значение, не совпавшее с case' );
 }
 
-//A class expression is another way to define a class. Class expressions can be named or unnamed. The name //given to a named class expression is local to the class's body.
+//************************** 1191
 
-// unnamed
-var Polygon = class {
-    constructor(height, width) {
-        this.height = height;
-        this.width = width;
-    }
-};
+//Перебор объекта
 
-// named
-var Polygon = class Polygon {
-    constructor(height, width) {
-        this.height = height;
-        this.width = width;
-    }
-};
+let obj = {a: 1, b: 2, n: 4}
+obj.__proto__.c = 3
+
+Object.defineProperty(obj, "n", {enumerable: false});
 
 
-var p = new Polygon();
-console.log(p) //Polygon {height: undefined, width: undefined}
+//1
+for (let key in obj) {
+  if(obj.hasOwnProperty(key)) console.log(key); //Без этого будет и c
 
-//**********************************
-class Cat {
-    constructor(name) {
-        this.name = name;
-    }
-
-    speak() {
-        console.log(this.name + ' makes a noise.');
-    }
 }
 
-class Lion extends Cat {
-    speak() {
-        super.speak();
-        console.log(this.name + ' roars.');
-    }
+//2
+//let keyNames = Object.keys(obj); //["a", "b"] - псевдомассив
+let keyNames = Object.getOwnPropertyNames(obj); //["a", "b", "n"]
+keyNames.forEach(function(elem) {
+  console.log(elem)
+})
+
+for (let i in keyNames) console.log(keyNames[i]) //a, b, n, 3 тк у псевдомассива еще length
+
+//************************************************
+//Перебор массива
+
+let arr = new Array(1, 2, 3) //let arr = [1, 2, 3]
+
+console.log(arr)
+for (let i in arr) {
+  console.log(arr[i])
 }
 
-//**********************************
-class Polygon {
-    constructor(height, width) {
-        this.height = height;
-        this.width = width;
-    }
 
-    get area() {
-        return this.calcArea();
-    }
-
-    calcArea() {
-        return this.height * this.width;
-    }
+//Этот способ надежнее, так как бывают псевдомассивы
+for (let i = 0; i < arr.length; i++) {
+  console.log(arr[i])
 }
 
-const square = new Polygon(10, 10);
+//Этот тоже надежен
+arr.forEach(function(elem) {
+  console.log(elem)
+})
 
-console.log(square.area);
+let newArr =arr.map(function(elem) {
+  return elem + 1;
+})
+console.log(newArr); //[2, 3, 4]
 
-//***********************
-
-class Point {
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    static distance(a, b) {
-        const dx = a.x - b.x;
-        const dy = a.y - b.y;
-
-        return Math.sqrt(dx*dx + dy*dy);
-    }
-}
-
-const p1 = new Point(5, 5);
-const p2 = new Point(10, 10);
-
-console.log(Point.distance(p1, p2));
-
-//****************************
-var CalculatorMixin = Base => class extends Base {
-    calc() { }
-};
-
-var RandomizerMixin = Base => class extends Base {
-    randomize() { }
-};
-
-class Foo { }
-class Bar extends CalculatorMixin(RandomizerMixin(Foo)) { }
-
-var b = new Bar();
-console.log(b.calc) //function calc() { }
-
-//******************************
-var action = function(){};
-console.log(typeof action === 'function') //true
-//*****************************************
+//******************************************************************************************
